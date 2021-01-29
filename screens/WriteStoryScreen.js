@@ -5,11 +5,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Dimensions,
 } from "react-native";
 import { Header } from "react-native-elements";
 import db from "../config";
 import firebase from "firebase";
+import { Alert } from "react-native";
+import updateStories from "./ReadStoryScreen";
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default class WriteStoryScreen extends React.Component {
   constructor() {
@@ -28,7 +34,22 @@ export default class WriteStoryScreen extends React.Component {
       story: this.state.story,
       date: firebase.firestore.Timestamp.now().toDate(),
     });
+    Alert.alert("Your Story Has Been Submitted");
+    this.setState({
+      author: "",
+      title: "",
+      story: ""
+    })
   };
+
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  submit_updateStories = async () => {
+    this.submitStory();
+    sleep(2000).then(() => { updateStories() });
+  }
 
   render() {
     return (
@@ -46,6 +67,7 @@ export default class WriteStoryScreen extends React.Component {
           <TextInput
             style={styles.titleInputBox}
             placeholder="Title of the Story"
+            placeholderTextColor="white"
             value = {this.state.title}
             onChangeText={(text) => {
               this.setState({
@@ -58,6 +80,7 @@ export default class WriteStoryScreen extends React.Component {
           <TextInput
             style={styles.authorInputBox}
             placeholder="Name of the Author"
+            placeholderTextColor="white"
             value = {this.state.author}
             onChangeText={(text) => {
               this.setState({
@@ -72,6 +95,7 @@ export default class WriteStoryScreen extends React.Component {
             multiline
             numberOfLines={30}
             placeholder="Write your Story Here"
+            placeholderTextColor="white"
             value = {this.state.story}
             onChangeText={(text) => {
               this.setState({
@@ -84,7 +108,7 @@ export default class WriteStoryScreen extends React.Component {
           <TouchableOpacity
             style={styles.sendButton}
             onPress={() => {
-              this.submitStory();
+              this.submit_updateStories();
             }}
           >
             <Text style={styles.sendButtonText}>Send Story</Text>
@@ -98,8 +122,8 @@ export default class WriteStoryScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#462173",
   },
 
   titleInputBox: {
@@ -112,6 +136,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontWeight: "bold",
     fontSize: 24,
+    borderColor: "#5D2C99",
+    backgroundColor: "#7537BF",
+    color: "white",
   },
   authorInputBox: {
     marginTop: 15,
@@ -123,6 +150,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontWeight: "bold",
     fontSize: 20,
+    borderColor: "#5D2C99",
+    backgroundColor: "#7537BF",
+    color: "white",
   },
   storyInputBox: {
     marginTop: 15,
@@ -136,6 +166,9 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     textAlign: "auto",
     paddingHorizontal: 5,
+    borderColor: "#5D2C99",
+    backgroundColor: "#7537BF",
+    color: "white",
   },
   sendButton: {
     marginTop: 15,
